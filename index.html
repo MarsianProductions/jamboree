@@ -504,14 +504,25 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) save(); }
 
 // Aviso de 5 s antes de bloquear: dejar descongelando la comida de mañana
 let lockTimer=null;
+// Respaldo en archivo (Descargas). Nombre con hora para no sobrescribir.
+function backup(){
+  try{
+    save();
+    const d=new Date(), b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}), u=URL.createObjectURL(b), l=document.createElement('a');
+    l.href=u; l.download=`jamboree-respaldo-${ymd(d)}_${p2(d.getHours())}${p2(d.getMinutes())}.json`;
+    document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(u),3000);
+    return true;
+  }catch(e){ return false; }
+}
 function lockWarn(){
+  const okB=backup();
   const ti=todayIdx(), nx=DAYS[ti+1];
   let msg;
   if(!nx) msg='Revisa si necesitas dejar algo descongelando para mañana';
   else if(nx.away) msg=`Mañana (${DOW[nx.dow]}) es finde libre: revisa si vas a necesitar algo de la refri`;
   else msg=`Mañana toca <b>${nx.emo} ${nx.dish}</b> · déjalo descongelando`;
   const ov=openOv(`<div class="sheet thaw"><div class="fe">🧊</div><h3>¡Descongela la comida!</h3><p class="tm">${msg}</p>
-    <div class="bar cd"><i></i></div><p class="hint">Bloqueando en 5 segundos…</p>
+    <div class="bar cd"><i></i></div><p class="hint">${okB?'💾 Respaldo guardado en Descargas · ':'⚠️ No se pudo guardar el respaldo · '}Bloqueando en 5 segundos…</p>
     <div class="row" style="justify-content:center;margin-top:14px"><button class="btn lime" data-act="lockNow">✅ Listo, bloquear</button><button class="btn ghost" data-act="closeov">Cancelar</button></div></div>`);
   const i=ov.querySelector('.cd i'); i.style.transform='scaleX(1)';
   requestAnimationFrame(()=>requestAnimationFrame(()=>{i.style.transition='transform 5s linear'; i.style.transform='scaleX(0)';}));
@@ -602,10 +613,7 @@ document.addEventListener('click',async e=>{
         <button class="btn" data-act="export">💾 Guardar respaldo (archivo)</button>
         <button class="btn yel" data-act="import">📂 Restaurar respaldo</button>
         <button class="btn ghost" data-act="closeov">Cerrar</button></div>`); break;
-    case 'export': {
-      const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}), u=URL.createObjectURL(b), l=document.createElement('a');
-      l.href=u; l.download=`jamboree-respaldo-${ymd(now())}.json`; document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000);
-      closeOv(); toast('💾 Respaldo guardado en Descargas'); break; }
+    case 'export': backup(); closeOv(); toast('💾 Respaldo guardado en Descargas'); break;
     case 'import': closeOv(); $('#impf').click(); break;
   }
 });
