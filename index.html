@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0d0a1f">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Jamboree</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Luckiest+Guy&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0a1f;--card:#1c1540;--card2:#251b52;--ink:#f5f1ff;--mute:#a79fc9;--pink:#ff2bd6;--cyan:#22f0ff;--lime:#b6ff3b;--yel:#ffe14d;--red:#ff4d6d;--r:22px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:800 18px/1.3 Nunito,system-ui,sans-serif;overflow-x:hidden;-webkit-user-select:none;user-select:none}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:
+ radial-gradient(60vw 50vh at 0% 0%,#ff2bd630,transparent 60%),
+ radial-gradient(50vw 50vh at 100% 15%,#22f0ff26,transparent 60%),
+ radial-gradient(60vw 50vh at 50% 115%,#b6ff3b1f,transparent 60%),
+ linear-gradient(#ffffff07 1px,transparent 1px) 0 0/44px 44px,
+ linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/44px 44px,var(--bg)}
+button{font:inherit;color:inherit;cursor:pointer}
+.disp{font-family:Bungee,Impact,"Arial Black",sans-serif;font-weight:400;letter-spacing:.01em}
+[hidden]{display:none!important}
+
+/* ---------- botones ---------- */
+.btn{font:900 17px Nunito,sans-serif;color:#000;background:var(--cyan);border:3px solid #000;border-radius:16px;padding:10px 16px;box-shadow:4px 4px 0 #000;min-height:54px;transition:transform .08s}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000}
+.btn.pink{background:var(--pink)}.btn.lime{background:var(--lime)}.btn.yel{background:var(--yel)}
+.btn.ghost{background:var(--card2);color:var(--ink)}
+.btn.icon{width:54px;padding:0;font-size:22px}
+.btn.xl{font-size:22px;min-height:70px;padding:12px 26px}
+.btn.sel{outline:3px solid var(--yel);outline-offset:3px}
+.rb{width:58px;height:58px;border-radius:50%;border:3px solid #000;background:var(--yel);color:#000;font:900 30px/1 Nunito;box-shadow:3px 3px 0 #000;display:grid;place-items:center;padding:0}
+.rb.minus{background:var(--pink)}
+.rb:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;gap:12px;padding:14px 20px 8px;flex-wrap:wrap}
+.logo{font-family:"Luckiest Guy",Bungee,Impact,sans-serif;font-size:42px;line-height:1;letter-spacing:.03em;padding:6px 8px 0;background:linear-gradient(100deg,#ffe14d 0%,#ff8a3d 30%,#ff2bd6 62%,#22f0ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(3px 3px 0 #ff2bd6) drop-shadow(3px 3px 0 #000);transform:rotate(-3deg);border:0}
+.logo{white-space:nowrap}
+.logo .j{font-size:1.18em}
+.range{background:var(--lime);color:#000;border:3px solid #000;border-radius:12px;padding:4px 12px;font:900 15px Nunito;transform:rotate(2deg);box-shadow:3px 3px 0 #000}
+.sp{flex:1}
+
+/* ---------- tira de días ---------- */
+.strip{display:grid;grid-template-columns:repeat(11,1fr);gap:9px;padding:16px 20px 16px}
+.chip{position:relative;background:var(--card);border:3px solid #000;border-radius:18px;padding:8px 2px 8px;text-align:center;box-shadow:4px 4px 0 #000;transition:transform .18s cubic-bezier(.3,1.5,.5,1)}
+.chip .dw{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.chip .dn{font-family:Bungee,Impact,sans-serif;font-size:27px;line-height:1.1}
+.chip .mo{font-size:11px;color:var(--mute);text-transform:uppercase}
+.rw{position:relative;width:42px;height:42px;margin:6px auto 0}
+.rw svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.rw circle{fill:none;stroke-width:4}
+.rw .bg{stroke:#ffffff1c}.rw .fg{stroke:var(--cyan);stroke-linecap:round;stroke-dasharray:88;transition:stroke-dashoffset .4s}
+.rw .ce{position:absolute;inset:0;display:grid;place-items:center;font-size:18px}
+.chip.done .rw .fg{stroke:var(--lime)}
+.chip.sel{background:var(--yel);color:#000;transform:translateY(-5px) rotate(-2deg)}
+.chip.sel .dw,.chip.sel .mo{color:#000b}
+.chip.sel .rw .bg{stroke:#0002}.chip.sel .rw .fg{stroke:#000}
+.chip.today::after{content:"HOY";position:absolute;top:-13px;left:50%;transform:translateX(-50%) rotate(-5deg);background:var(--pink);color:#000;font:900 12px Nunito;padding:2px 9px;border-radius:8px;border:2px solid #000}
+.chip.past{opacity:.72}
+.chip .lk{position:absolute;top:4px;right:6px;font-size:12px}
+
+/* ---------- cabecera del día ---------- */
+main{padding:0 20px 40px}
+.dayhead{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:4px 0 16px}
+.dtitle{font-size:40px;line-height:1;color:var(--ink);text-shadow:3px 3px 0 #000}
+.dtitle span{color:var(--pink)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.badge{font:900 14px Nunito;border:2px solid #000;border-radius:10px;padding:4px 10px;background:var(--card2);color:var(--ink)}
+.badge.pink{background:var(--pink);color:#000}.badge.cyan{background:var(--cyan);color:#000}.badge.yel{background:var(--yel);color:#000}.badge.lime{background:var(--lime);color:#000}
+.pbox{margin-left:auto;min-width:220px;text-align:right}
+.pnum{font-size:34px;color:var(--lime)}
+.pnum small{font:800 15px Nunito;color:var(--mute)}
+.bar{height:14px;background:#00000066;border:2px solid #000;border-radius:10px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--yel),var(--lime));transform-origin:left;transition:transform .35s ease}
+.lockbar{display:flex;align-items:center;gap:14px;justify-content:space-between;background:#ff2bd622;border:3px dashed var(--pink);border-radius:18px;padding:10px 14px;margin-bottom:16px;font-size:19px}
+
+/* ---------- tarjetas ---------- */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+.cards.locked{opacity:.5}
+.cards.locked .chk,.cards.locked button,.cards.locked input{pointer-events:none}
+.card{background:var(--card);border:3px solid #000;border-radius:var(--r);box-shadow:6px 6px 0 #000;padding:18px 16px 14px;position:relative}
+.card h2{margin:-34px 0 10px;display:inline-block;font-size:21px;color:#000;background:var(--yel);border:3px solid #000;border-radius:12px;padding:4px 14px;transform:rotate(-2deg);box-shadow:3px 3px 0 #000}
+.card.pets h2{background:var(--cyan);transform:rotate(1.5deg)}
+.card.home h2{background:var(--pink)}
+.sec{font:900 13px Nunito;color:var(--mute);text-transform:uppercase;letter-spacing:.12em;margin:14px 0 4px}
+.chk{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#ffffff08;border:2px solid #ffffff1a;border-radius:16px;padding:9px 12px;margin:8px 0;min-height:62px}
+.chk .box{flex:none;width:38px;height:38px;border-radius:12px;border:3px solid var(--mute);display:grid;place-items:center;color:transparent;font:900 24px Nunito}
+.chk .lbl{flex:1}
+.chk small{display:block;font-weight:600;font-size:14px;color:var(--mute)}
+.chk.on{background:#b6ff3b1a;border-color:var(--lime)}
+.chk.on .box{background:var(--lime);border-color:#000;color:#000}
+.chk.on .lbl{color:#d9ffa0}
+.pop{animation:pop .4s cubic-bezier(.3,1.7,.5,1)}
+@keyframes pop{0%{transform:scale(.92)}100%{transform:scale(1)}}
+.meal{background:#0000003a;border-radius:16px;padding:12px;margin:10px 0;border:2px dashed #ffffff24}
+.when{font:900 13px Nunito;color:var(--mute);text-transform:uppercase;letter-spacing:.1em}
+.dish{font-family:Bungee,Impact,sans-serif;font-size:27px;color:var(--yel);margin:4px 0 2px}
+.hint{font-size:14px;color:var(--mute);font-weight:600}
+.txt{width:100%;font:800 18px Nunito,sans-serif;background:#0d0a1f;color:var(--ink);border:3px solid var(--cyan);border-radius:14px;padding:12px;margin-top:8px;-webkit-user-select:text;user-select:text;outline:none}
+.txt:focus{border-color:var(--yel)}
+.txt::placeholder{color:#a79fc9aa}
+.next{font-size:15px;color:var(--mute);background:#ffffff06;border-radius:14px;padding:12px;margin:6px 0}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
+.who.solo{grid-template-columns:1fr}
+.who .btn{background:var(--card2);color:var(--ink);font-size:19px}
+.who .btn.on{background:var(--lime);color:#000}
+.wstat{font-size:14px;color:var(--mute);font-weight:600}
+.sw{display:flex;align-items:center;justify-content:space-between;width:100%;background:#ffffff08;border:2px solid #ffffff1a;border-radius:16px;padding:10px 12px;min-height:62px;margin:8px 0;text-align:left}
+.sw .tg{width:66px;height:36px;border-radius:20px;background:#ffffff22;border:3px solid #000;position:relative;flex:none}
+.sw .tg::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--ink);transition:transform .2s cubic-bezier(.3,1.5,.5,1)}
+.sw.on .tg{background:var(--pink)}
+.sw.on .tg::after{transform:translateX(30px);background:#000}
+.washer{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:14px;padding:10px 12px;font-size:17px}
+.washer b{color:var(--cyan);font-family:Bungee,Impact,sans-serif;font-weight:400;font-size:20px}
+.porc{display:flex;align-items:center;gap:10px;border:2px solid var(--cyan);border-radius:16px;padding:10px 12px;margin:10px 0;background:#22f0ff10}
+.porc .pt{flex:1;font-size:15px}
+.porc b{font-size:28px;color:var(--cyan)}
+.porc small{display:block;color:var(--mute);font-weight:600}
+.porc.low{border-color:var(--red);background:#ff4d6d1a}
+.porc.low b{color:var(--red)}
+.porc .rb{width:48px;height:48px;font-size:24px}
+
+/* ---------- inventario ---------- */
+.inv{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.item{background:var(--card);border:3px solid #000;border-radius:var(--r);box-shadow:6px 6px 0 #000;padding:16px;position:relative;display:flex;flex-direction:column;gap:8px}
+.item .ie{font-size:44px;line-height:1}
+.item .in{font-size:19px;min-height:48px}
+.item .iq{font-size:48px;color:var(--cyan);line-height:1}
+.item.zero .iq{color:var(--red)}
+.item.zero::after{content:"AGOTADO";position:absolute;top:16px;right:14px;background:var(--red);color:#000;font:900 13px Nunito;padding:3px 8px;border:2px solid #000;border-radius:8px;transform:rotate(6deg)}
+.item .st{display:flex;gap:12px;justify-content:flex-end;margin-top:4px}
+.tag{font:900 12px Nunito;background:var(--pink);color:#000;border:2px solid #000;border-radius:8px;padding:1px 7px;vertical-align:middle;white-space:nowrap}
+.x{position:absolute;bottom:20px;left:16px;background:none;border:2px solid #ffffff33;border-radius:12px;color:var(--mute);width:46px;height:46px;font-size:18px}
+.item.add{border-style:dashed;border-color:var(--lime);background:#b6ff3b0d}
+.emos{display:flex;flex-wrap:wrap;gap:6px}
+.emos button{width:44px;height:44px;border-radius:12px;border:2px solid #ffffff22;background:#ffffff08;font-size:22px;padding:0}
+.emos button.on{border-color:var(--yel);background:#ffe14d33}
+.row{display:flex;gap:10px;align-items:stretch}
+.num{width:90px;text-align:center;margin-top:0}
+
+/* ---------- overlays ---------- */
+.ov{position:fixed;inset:0;background:#05030fe0;display:grid;place-items:center;z-index:50;animation:fade .18s ease;padding:16px}
+@keyframes fade{from{opacity:0}}
+.sheet{background:var(--card);border:3px solid #000;box-shadow:8px 8px 0 #000;border-radius:28px;padding:24px;width:min(440px,100%);text-align:center;animation:rise .25s cubic-bezier(.3,1.4,.5,1)}
+@keyframes rise{from{transform:translateY(30px) scale(.96)}}
+.sheet h3{font-family:Bungee,Impact,sans-serif;font-weight:400;font-size:24px;margin:0 0 4px;color:var(--yel)}
+.sheet p{margin:0;color:var(--mute);font-weight:600}
+.dots{display:flex;gap:12px;justify-content:center;margin:18px 0}
+.dot{width:22px;height:22px;border-radius:50%;border:3px solid var(--cyan);display:block;transition:transform .12s}
+.dot.f{background:var(--cyan);transform:scale(1.12)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pad button{height:74px;font:900 30px Nunito;border:3px solid #000;border-radius:18px;background:var(--card2);box-shadow:4px 4px 0 #000;color:var(--ink)}
+.pad button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000;background:var(--pink);color:#000}
+.pad button.e{visibility:hidden}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.err .dot{border-color:var(--red)}
+.lock{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:var(--bg);padding:16px}
+.lock .logo{font-size:64px;display:block;margin:0 auto 6px}
+.lock .sheet{animation:none}
+.lock .logo{font-size:64px;display:inline-block}
+.thaw .fe{font-size:84px}
+.thaw .tm{color:var(--ink);font-size:21px;margin:10px 0 16px}
+.thaw .tm b{color:var(--yel)}
+.thaw .hint{margin-top:8px}
+.menu .btn{width:100%;margin-top:12px}
+.fri{background:repeating-linear-gradient(-45deg,#ff2bd6 0 40px,#ffe14d 40px 80px)}
+.friBox{background:var(--bg);border:5px solid #000;border-radius:34px;box-shadow:12px 12px 0 #000;padding:30px 34px;text-align:center;max-width:860px;animation:rise .3s cubic-bezier(.3,1.4,.5,1)}
+.fe{font-size:120px;line-height:1;animation:bob 1s ease-in-out infinite alternate;display:inline-block}
+@keyframes bob{to{transform:translateY(-14px) rotate(6deg)}}
+.ft{font-size:clamp(44px,7.5vw,96px);line-height:1;color:var(--yel);text-shadow:4px 4px 0 var(--pink),8px 8px 0 #000;margin:14px 0}
+.fs{font-size:26px;margin-bottom:22px;color:var(--cyan)}
+.friBox .row{justify-content:center;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,200%);visibility:hidden;background:var(--yel);color:#000;border:3px solid #000;border-radius:16px;padding:12px 20px;box-shadow:5px 5px 0 #000;font:900 18px Nunito;z-index:80;transition:transform .3s cubic-bezier(.3,1.4,.5,1);pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{transform:translate(-50%,0);visibility:visible}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70;display:none}
+
+/* ---------- responsive (Tab A9+ vertical / pantallas chicas) ---------- */
+@media (max-width:1100px){.cards{grid-template-columns:1fr 1fr}.card.home{grid-column:1/-1}}
+@media (max-width:900px){
+ .strip{grid-template-columns:repeat(11,84px);overflow-x:auto;padding-top:18px;scrollbar-width:none}
+ .strip::-webkit-scrollbar{display:none}
+}
+@media (max-width:700px){
+ .cards{grid-template-columns:1fr}.card.home{grid-column:auto}
+ .top{padding:12px 16px 4px}.strip,main{padding-left:16px;padding-right:16px}
+ .dtitle{font-size:30px}.pbox{margin-left:0;width:100%;text-align:left}
+ .range{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="lock" class="lock">
+  <div class="sheet">
+    <div class="logo"><span class="j">J</span>amboree</div>
+    <h3>¿Quién anda ahí? 👀</h3>
+    <p>Ingresa el código de 6 dígitos</p>
+    <div id="lockpad"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="top">
+    <button class="logo" data-act="today" aria-label="Ir a hoy"><span class="j">J</span>amboree</button>
+    <div class="range">25 NOV → 5 DIC</div>
+    <div class="sp"></div>
+    <button class="btn" data-view="day">📅 Días</button>
+    <button class="btn pink" data-view="inv">🍫 Inventario</button>
+    <button class="btn ghost icon" data-act="menu" aria-label="Opciones">⚙️</button>
+    <button class="btn ghost icon" data-act="lock" aria-label="Bloquear">🔒</button>
+  </header>
+  <nav class="strip" id="strip"></nav>
+  <main id="main"></main>
+</div>
+
+<div id="ovroot"></div>
+<div id="toast"></div>
+<canvas id="fx"></canvas>
+<input type="file" id="impf" accept="application/json,.json" hidden>
+
+<script>
+(()=>{
+'use strict';
+const PIN='250502', KEY='casa11_v1';
+const Q=new URLSearchParams(location.search);
+const $=s=>document.querySelector(s);
+const p2=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Fecha "ahora" (para pruebas: ?hoy=2026-11-27&hora=20)
+function now(){
+  const d=new Date(), h=Q.get('hoy');
+  if(h){const [y,m,dd]=h.split('-').map(Number); d.setFullYear(y,m-1,dd);}
+  if(Q.has('hora')) d.setHours(+Q.get('hora'),0,0);
+  return d;
+}
+const DOW=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MON=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const RAW=[
+ ['2026-11-25','Pollo','🍗'],['2026-11-26','Corvina','🐟'],['2026-11-27','Pollo','🍗'],
+ ['2026-11-28'],['2026-11-29'],
+ ['2026-11-30','Pollo','🍗'],['2026-12-01','Chanchitos Tuti','🐷'],['2026-12-02','Pollo','🍗'],
+ ['2026-12-03','Chuletas','🥩'],['2026-12-04','Pollo','🍗'],['2026-12-05']
+];
+const DAYS=RAW.map(([d,dish,emo],i)=>{
+  const [y,m,dd]=d.split('-').map(Number), dt=new Date(y,m-1,dd), dow=dt.getDay();
+  return {i,d,dish,emo,away:!dish,dow,num:dd,mon:MON[m-1],
+    alt:i%2===0,            // caracoles/hámster y barrer: 25,27,29,1,3,5
+    mosho:[1,3,5].includes(dow), // lun, mié, vie
+    fri:dow===5};
+});
+function todayIdx(){
+  const t=ymd(now()), i=DAYS.findIndex(x=>x.d===t);
+  if(i>=0) return i;
+  return t<DAYS[0].d?-1:DAYS.length;
+}
+
+// ---------- estado ----------
+const defInv=()=>[
+ {id:'fideos',name:'Fideos instantáneos',emo:'🍜',qty:2,max:2,step:1},
+ {id:'papitas',name:'Funda fiesta de papitas',emo:'🥔',qty:1,max:1,step:1},
+ {id:'chifles',name:'Funda de chifles (media)',emo:'🍌',qty:1,max:1,step:1},
+ {id:'mallows',name:'Funda de marshmallows pequeños',emo:'☁️',qty:1,max:1,step:1},
+ {id:'choco',name:'Caja mediana de chocolates',emo:'🍫',qty:1,max:1,step:1},
+ {id:'galletas',name:'Funda de galletas',emo:'🍪',qty:1,max:1,step:1}
+];
+let S=null;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||S.v!==1) S={v:1,days:{},inv:defInv(),gipsy:2,seq:1};
+// migración: chifles cuenta como 1 entero y ningún snack supera lo que había al inicio
+S.inv.forEach(it=>{ if(it.id==='chifles'&&it.step!==1){it.name='Funda de chifles (media)';it.qty=Math.ceil(it.qty);it.max=1;}
+  it.step=1; it.qty=Math.min(Math.round(it.qty),it.max||0); });
+let saveT;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('⚠️ No se pudo guardar')}}
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(save,400)}
+const ds=i=>S.days[DAYS[i].d]||(S.days[DAYS[i].d]={});
+
+let sel=Math.min(Math.max(todayIdx(),0),10), view='day', lastK=null;
+const unlocked=new Set();
+const isLocked=i=>i<todayIdx()&&!unlocked.has(i);
+
+function progress(i){
+  const s=ds(i), m=DAYS[i]; let t=0,d=0;
+  const add=b=>{t++; if(b) d++;};
+  add(s.lunch);add(s.dinner);add(s.gipsyAM);add(s.gipsyPM);add(s.mochi);
+  if(m.alt){add(s.caracoles);add(s.hamster);add(!!s.barrer);}
+  if(m.mosho){add(s.moshoAgua);add(s.moshoComida);}
+  add(s.platos);add(s.camaM);add(s.camaS);
+  if(m.fri) add(s.ropa);
+  return {t,d,p:t?d/t:0};
+}
+function fmt(q){const w=Math.floor(q+1e-9), h=q-w>=.5-1e-9; return ((w||!h)?String(w):'')+(h?'½':'');}
+function nextOf(pred){
+  for(let j=sel+1;j<DAYS.length;j++) if(pred(DAYS[j])) return `${DOW[DAYS[j].dow].slice(0,3)} ${DAYS[j].num}`;
+  return 'después del calendario';
+}
+
+// ---------- render ----------
+function ring(p,emo){
+  return `<div class="rw"><svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="14"/><circle class="fg" cx="18" cy="18" r="14" style="stroke-dashoffset:${(88*(1-p)).toFixed(1)}"/></svg><div class="ce">${emo}</div></div>`;
+}
+function renderStrip(){
+  const ti=todayIdx();
+  $('#strip').innerHTML=DAYS.map(m=>{
+    const p=progress(m.i);
+    return `<button class="chip${m.i===sel?' sel':''}${m.i===ti?' today':''}${p.p===1?' done':''}${m.i<ti?' past':''}" data-day="${m.i}">
+      ${m.i<ti?'<span class="lk">🔒</span>':''}
+      <div class="dw">${DOW[m.dow].slice(0,3)}</div><div class="dn">${m.num}</div><div class="mo">${m.mon}</div>
+      ${ring(p.p,m.away?'🏖️':m.emo)}</button>`;
+  }).join('');
+}
+const chk=(s,k,label,sub)=>`<button class="chk${s[k]?' on':''}" data-k="${k}"><span class="box">✓</span><span class="lbl">${label}${sub?`<small>${sub}</small>`:''}</span></button>`;
+
+function dayHTML(){
+  const m=DAYS[sel], s=ds(sel), p=progress(sel), locked=isLocked(sel);
+  const prev=sel>0?DAYS[sel-1]:null, ps=sel>0?ds(sel-1):{};
+
+  // ---- comida ----
+  const leftover=!prev?'🍚 Arroz Relleno':prev.away?(ps.dinnerTxt||''):`${prev.emo} ${prev.dish}`;
+  const lunchEdit=(prev&&prev.away)||m.away;
+  let food=`<div class="meal"><div class="when">☀️ Almuerzo · Mateo ${m.away?'(en casa)':'(trabajo)'}</div>`;
+  if(lunchEdit){
+    food+=`<input class="txt" data-txt="lunchTxt" maxlength="60" value="${esc(s.lunchTxt||'')}" placeholder="${leftover?esc('Sobras de ayer: '+leftover):'¿Qué almorzaste?'}">`;
+  }else{
+    food+=`<div class="dish">${leftover}</div><div class="hint">Lo que sobró de la cena de ayer</div>`;
+  }
+  food+=chk(s,'lunch','Almuerzo listo')+`</div>`;
+  food+=`<div class="meal"><div class="when">🌙 Cena · ${m.away?'Solo Mateo':'Mateo y Samy'}</div>`;
+  if(m.away){
+    food+=`<input class="txt" data-txt="dinnerTxt" maxlength="60" value="${esc(s.dinnerTxt||'')}" placeholder="¿Qué cocinaste o compraste?"><div class="hint" style="margin-top:6px">Lo que sobre pasa al almuerzo de mañana</div>`;
+  }else{
+    food+=`<div class="dish">${m.emo} ${m.dish}</div><div class="hint">Lo que sobre → almuerzo de Mateo mañana</div>`;
+  }
+  food+=chk(s,'dinner','Cena hecha')+`</div>`;
+  food+=`<button class="btn ghost" style="width:100%" data-view="inv">🍫 ¿Antojo? Ver snacks y extras</button>`;
+
+  // ---- mascotas ----
+  const g=S.gipsy;
+  let pets=`<div class="sec">Perros · todos los días</div>`+
+    chk(s,'gipsyAM','🐕 Gipsy · mañana','Comida de la refri')+
+    chk(s,'gipsyPM','🐕 Gipsy · noche','Comida de la refri')+
+    `<div class="porc${g<=1?' low':''}"><div class="pt"><b class="disp">${g}</b> porción${g===1?'':'es'} de Gipsy en la refri<small>${g<=0?'⚠️ ¡Se acabó! Prepara más':g<=1?'⚠️ Queda poca, ten lista otra funda':`= ${fmt(g/2)} funda${g/2===1?'':'s'} (1 funda = 1 día)`}</small></div>
+      <button class="rb minus" data-act="gip-">−</button><button class="rb" data-act="gip+" title="+1 funda">+</button></div>`+
+    chk(s,'mochi','🐶 Mochi · noche','Pepas');
+  pets+=`<div class="sec">Caracoles y Hámster · cada 2 días</div>`;
+  pets+=m.alt?chk(s,'caracoles','🐌 Caracoles')+chk(s,'hamster','🐹 Hámster')
+             :`<div class="next">😴 Hoy descansan · próximo: <b>${nextOf(d=>d.alt)}</b></div>`;
+  pets+=`<div class="sec">Gato Mosho · lun, mié, vie</div>`;
+  pets+=m.mosho?chk(s,'moshoAgua','🐱 Mosho tiene agua','Revisar y rellenar')+chk(s,'moshoComida','🐱 Mosho tiene comida','Revisar su reserva')
+               :`<div class="next">🐱 Sin revisión hoy · próxima: <b>${nextOf(d=>d.mosho)}</b></div>`;
+
+  // ---- casa ----
+  let home=`<div class="sec">🧹 Barrer · cada 2 días</div>`;
+  if(m.alt){
+    home+=m.away
+      ?`<div class="who solo"><button class="btn${s.barrer==='Mateo'?' on':''}" data-who="Mateo">${s.barrer==='Mateo'?'✓ ':''}Mateo</button></div><div class="wstat">Samy está fuera → te toca a ti, Mateo</div>`
+      :`<div class="who"><button class="btn${s.barrer==='Mateo'?' on':''}" data-who="Mateo">${s.barrer==='Mateo'?'✓ ':''}Mateo</button><button class="btn${s.barrer==='Samy'?' on':''}" data-who="Samy">${s.barrer==='Samy'?'✓ ':''}Samy</button></div>`;
+    home+=`<div class="wstat">${s.barrer?`✓ Barrió ${s.barrer} · 🔐 cambiar o desmarcar pide código`:'Toca quién barrió'}</div>`;
+  }else home+=`<div class="next">Hoy no toca · próximo: <b>${nextOf(d=>d.alt)}</b></div>`;
+
+  home+=`<div class="sec">🍳 Cocina</div>`;
+  if(m.away){
+    home+=`<div class="washer">🏖️ Samy fuera · Mateo cocina y lava</div>`+chk(s,'platos','🍽️ Platos lavados','Le toca a Mateo');
+  }else{
+    const w=s.cocino?'Samy':'Mateo';
+    home+=`<button class="sw${s.cocino?' on':''}" data-act="cocino"><span>¿Mateo cocinó?</span><span class="tg"></span></button>
+      <div class="washer">🧽 Lava los platos: <b>${w}</b></div>`+chk(s,'platos','🍽️ Platos lavados',`Le toca a ${w}`);
+  }
+  home+=`<div class="sec">🛏️ Tender camas · diario</div>`+chk(s,'camaM','Cama de Mateo')+chk(s,'camaS','Cama de Samy');
+  home+=`<div class="sec">🧺 Lavar ropa · viernes</div>`;
+  home+=m.fri?chk(s,'ropa','🧺 Lavar la ropa','🔔 Recordatorio a las 8 PM')
+             :`<div class="next">Próximo día de lavado: <b>${nextOf(d=>d.fri)}</b></div>`;
+
+  return `<section class="dayhead">
+     <div><div class="dtitle disp">${DOW[m.dow]} <span>${m.num} ${m.mon}</span></div>
+     <div class="badges">${m.away?'<span class="badge pink">🏖️ Finde · Samy fuera</span>':'<span class="badge cyan">👥 Mateo + Samy</span>'}
+       ${m.fri?'<span class="badge yel">🧺 Lavar ropa 8 PM</span>':''}${m.alt?'<span class="badge lime">🧹 Toca barrer</span>':''}</div></div>
+     <div class="pbox"><div class="pnum disp">${p.d}/${p.t} <small>tareas</small></div><div class="bar"><i style="transform:scaleX(${p.p})"></i></div></div>
+   </section>
+   ${locked?`<div class="lockbar"><span>🔒 Día pasado bloqueado</span><button class="btn pink" data-act="unlockday">Desbloquear con código</button></div>`:''}
+   <div class="cards${locked?' locked':''}">
+     <section class="card food"><h2 class="disp">🍗 Comida</h2>${food}</section>
+     <section class="card pets"><h2 class="disp">🐾 Mascotas</h2>${pets}</section>
+     <section class="card home"><h2 class="disp">🏠 Casa</h2>${home}</section>
+   </div>`;
+}
+
+const EMOS=['🍬','🍫','🍪','🍿','🥤','🧃','🍩','🥜','🍦','🍞'];
+let addEmo='🍬';
+function invHTML(){
+  const items=S.inv.map(it=>`<div class="item${it.qty<=0?' zero':''}">
+    <div class="ie">${it.emo}</div>
+    <div class="in">${esc(it.name)} ${it.any?'<span class="tag">de Any 💝</span>':''}</div>
+    <div class="iq disp">${fmt(it.qty)}</div>
+    <div class="bar"><i style="transform:scaleX(${Math.min(1,it.qty/(it.max||1)).toFixed(3)})"></i></div>
+    <div class="st"><button class="rb minus" data-inv="-" data-id="${it.id}">−</button><button class="rb" data-inv="+" data-id="${it.id}">+</button></div>
+    ${it.any?`<button class="x" data-del="${it.id}" aria-label="Quitar">✕</button>`:''}
+  </div>`).join('');
+  return `<section class="dayhead"><div><div class="dtitle disp">Inventario <span>de extras</span></div>
+    <div class="badges"><span class="badge cyan">Toca − cuando se coma algo</span><span class="badge pink">💝 Lo que traiga Any se añade abajo</span></div></div></section>
+   <div class="inv">${items}
+    <form class="item add" id="addf" autocomplete="off">
+      <div class="ie">🎁</div><div class="in">¿Any trajo algo?</div>
+      <input class="txt" name="n" maxlength="40" placeholder="Nombre (ej: Galletas Oreo)" required>
+      <div class="emos">${EMOS.map(e=>`<button type="button" data-emo="${e}" class="${e===addEmo?'on':''}">${e}</button>`).join('')}</div>
+      <div class="row"><input class="txt num" name="q" type="number" min="1" max="99" value="1" inputmode="numeric"><button class="btn lime" style="flex:1">➕ Añadir</button></div>
+    </form></div>`;
+}
+
+function render(){
+  renderStrip();
+  $('#main').innerHTML=view==='day'?dayHTML():invHTML();
+  document.querySelectorAll('.top [data-view]').forEach(b=>b.classList.toggle('sel',b.dataset.view===view));
+  if(lastK){const el=$(`#main [data-k="${lastK}"]`); if(el) el.classList.add('pop'); lastK=null;}
+}
+
+// ---------- acciones ----------
+function toggle(k){
+  const s=ds(sel), before=progress(sel).p;
+  s[k]=!s[k];
+  if(k==='gipsyAM'||k==='gipsyPM'){
+    S.gipsy=Math.max(0,S.gipsy+(s[k]?-1:1));
+    if(s[k]&&S.gipsy===0) toast('⚠️ Se acabó la comida de Gipsy en la refri');
+  }
+  lastK=k; save(); render();
+  if(before<1&&progress(sel).p===1) celebrate();
+}
+async function barrer(who){
+  const s=ds(sel), before=progress(sel).p;
+  if(!s.barrer){ s.barrer=who; }
+  else if(s.barrer===who){ if(!await askPin('Desmarcar barrido','Confirma con el código')) return; s.barrer=null; }
+  else { if(!await askPin(`Cambiar a ${who}`,`Ahora dice que barrió ${s.barrer}`)) return; s.barrer=who; }
+  save(); render();
+  if(before<1&&progress(sel).p===1) celebrate();
+}
+function invStep(id,dir){
+  const it=S.inv.find(x=>x.id===id); if(!it) return;
+  const cap=it.max||0, nq=it.qty+dir;
+  if(nq>cap){ toast(`🔝 Máximo: ${fmt(cap)} (lo que había al inicio)`); return; }
+  if(nq<0) return;
+  it.qty=nq;
+  if(it.qty===0) toast(`😢 Se acabó: ${it.name}`);
+  save(); render();
+}
+
+// ---------- PIN ----------
+function pinPad(el,onOk){
+  let v='';
+  el.innerHTML=`<div class="dots">${'<i class="dot"></i>'.repeat(6)}</div><div class="pad">${['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>`<button type="button" class="${k?'':'e'}" data-p="${k}">${k}</button>`).join('')}</div>`;
+  const dots=[...el.querySelectorAll('.dot')];
+  const upd=()=>dots.forEach((d,i)=>d.classList.toggle('f',i<v.length));
+  const press=k=>{
+    if(k==='⌫') v=v.slice(0,-1); else if(/^\d$/.test(k)&&v.length<6) v+=k;
+    upd();
+    if(v.length===6){
+      if(v===PIN){ v=''; onOk(); setTimeout(upd,250); }
+      else{ el.classList.remove('shake','err'); void el.offsetWidth; el.classList.add('shake','err');
+        if(navigator.vibrate) navigator.vibrate(160);
+        setTimeout(()=>{v='';upd();el.classList.remove('err')},380); }
+    }
+  };
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-p]'); if(b){e.stopPropagation(); press(b.dataset.p);}});
+  return press;
+}
+let ovClose=null;
+function openOv(html,cls){
+  closeOv();
+  const r=$('#ovroot'); r.innerHTML=`<div class="ov ${cls||''}">${html}</div>`;
+  return r.firstElementChild;
+}
+function closeOv(){ if(ovClose){const f=ovClose; ovClose=null; f();} $('#ovroot').innerHTML=''; if(keyTarget!==lockPress) keyTarget=null; }
+function askPin(title,sub){
+  return new Promise(res=>{
+    const ov=openOv(`<div class="sheet"><h3>🔐 ${esc(title)}</h3><p>${esc(sub||'Ingresa el código')}</p><div class="pp"></div><button class="btn ghost" style="width:100%;margin-top:16px" data-act="closeov">Cancelar</button></div>`);
+    let done=false;
+    ovClose=()=>{if(!done){done=true;res(false);}};
+    keyTarget=pinPad(ov.querySelector('.pp'),()=>{done=true; ovClose=null; $('#ovroot').innerHTML=''; keyTarget=null; res(true);});
+  });
+}
+let keyTarget=null;
+document.addEventListener('keydown',e=>{ if(keyTarget&&(/^\d$/.test(e.key)||e.key==='Backspace')) keyTarget(e.key==='Backspace'?'⌫':e.key); });
+
+// ---------- bloqueo de la app ----------
+let lockPress;
+function lockApp(){
+  clearTimeout(lockTimer); lockTimer=null; ovClose=null; closeOv(); $('#app').hidden=true; $('#lock').hidden=false; keyTarget=lockPress;
+}
+function unlockApp(){
+  $('#lock').hidden=true; $('#app').hidden=false; keyTarget=null;
+  initAudio(); sel=Math.min(Math.max(todayIdx(),0),10); view='day'; unlocked.clear(); render(); fridayCheck(true);
+}
+lockPress=pinPad($('#lockpad'),unlockApp); keyTarget=lockPress;
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) save(); });
+
+// Aviso de 5 s antes de bloquear: dejar descongelando la comida de mañana
+let lockTimer=null;
+function lockWarn(){
+  const ti=todayIdx(), nx=DAYS[ti+1];
+  let msg;
+  if(!nx) msg='Revisa si necesitas dejar algo descongelando para mañana';
+  else if(nx.away) msg=`Mañana (${DOW[nx.dow]}) es finde libre: revisa si vas a necesitar algo de la refri`;
+  else msg=`Mañana toca <b>${nx.emo} ${nx.dish}</b> · déjalo descongelando`;
+  const ov=openOv(`<div class="sheet thaw"><div class="fe">🧊</div><h3>¡Descongela la comida!</h3><p class="tm">${msg}</p>
+    <div class="bar cd"><i></i></div><p class="hint">Bloqueando en 5 segundos…</p>
+    <div class="row" style="justify-content:center;margin-top:14px"><button class="btn lime" data-act="lockNow">✅ Listo, bloquear</button><button class="btn ghost" data-act="closeov">Cancelar</button></div></div>`);
+  const i=ov.querySelector('.cd i'); i.style.transform='scaleX(1)';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{i.style.transition='transform 5s linear'; i.style.transform='scaleX(0)';}));
+  lockTimer=setTimeout(()=>{lockTimer=null; lockApp();},5000);
+  ovClose=()=>{clearTimeout(lockTimer); lockTimer=null;};
+}
+
+// ---------- viernes: ropa ----------
+let AC=null, alarmed=false;
+function initAudio(){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} }
+function beep(){
+  if(!AC) return; const t=AC.currentTime+.05;
+  [0,.16,.32,.7,.86,1.02,1.4,1.56,1.72].forEach((dt,i)=>{
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.type='square'; o.frequency.value=[880,1175,1568][i%3];
+    g.gain.setValueAtTime(.0001,t+dt); g.gain.exponentialRampToValueAtTime(.22,t+dt+.02); g.gain.exponentialRampToValueAtTime(.0001,t+dt+.14);
+    o.connect(g); g.connect(AC.destination); o.start(t+dt); o.stop(t+dt+.16);
+  });
+  if(navigator.vibrate) navigator.vibrate([300,120,300,120,300]);
+}
+function fridayCheck(onOpen){
+  const ti=todayIdx(); if(ti<0||ti>10) return;
+  const m=DAYS[ti]; if(!m.fri||ds(ti).ropa) return;
+  const late=now().getHours()>=20;
+  if(onOpen||(late&&!alarmed)){
+    if(late){alarmed=true; beep();}
+    openOv(`<div class="friBox"><div class="fe">🧺</div><div class="ft disp">¡HOY SE LAVA<br>LA ROPA!</div>
+      <div class="fs">${late?'🔔 ¡Ya son las 8 PM! Es la hora 🔥':'🔔 Recordatorio: hoy a las 8 PM'}</div>
+      <div class="row"><button class="btn lime xl" data-act="ropaok">✅ ¡Ya está lavada!</button><button class="btn ghost xl" data-act="closeov">Más tarde</button></div></div>`,'fri');
+  }
+}
+let lastTi=todayIdx();
+setInterval(()=>{
+  if(!$('#lock').hidden) return;
+  const ti=todayIdx(); if(ti!==lastTi){lastTi=ti; alarmed=false; render();}
+  fridayCheck(false);
+},30e3);
+
+// ---------- confeti ----------
+function celebrate(){
+  toast('🎉 ¡Día completado! Bien ahí');
+  if(RM) return;
+  const c=$('#fx'), x=c.getContext('2d'), dpr=Math.min(devicePixelRatio||1,1.5), W=innerWidth, H=innerHeight;
+  c.width=W*dpr; c.height=H*dpr; c.style.display='block'; x.setTransform(dpr,0,0,dpr,0,0);
+  const C=['#ff2bd6','#22f0ff','#b6ff3b','#ffe14d','#ffffff'];
+  const P=Array.from({length:70},()=>({x:W/2+(Math.random()-.5)*200,y:H*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6.28,vr:(Math.random()-.5)*.4,w:8+Math.random()*8,c:C[Math.random()*5|0]}));
+  const t0=performance.now();
+  (function f(t){
+    const e=t-t0; x.clearRect(0,0,W,H);
+    if(e>1700){c.style.display='none';return;}
+    for(const p of P){p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;
+      x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.w/4,p.w,p.w/2);x.restore();}
+    requestAnimationFrame(f);
+  })(t0);
+}
+let tt;
+function toast(msg){const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2400);}
+
+// ---------- eventos ----------
+document.addEventListener('click',async e=>{
+  const t=e.target;
+  const day=t.closest('[data-day]');
+  if(day){ sel=+day.dataset.day; view='day'; render(); window.scrollTo({top:0,behavior:RM?'auto':'smooth'}); return; }
+  const v=t.closest('[data-view]');
+  if(v){ view=v.dataset.view; render(); window.scrollTo({top:0}); return; }
+  const k=t.closest('[data-k]');
+  if(k){ if(!isLocked(sel)) toggle(k.dataset.k); return; }
+  const w=t.closest('[data-who]');
+  if(w){ if(!isLocked(sel)) barrer(w.dataset.who); return; }
+  const inv=t.closest('[data-inv]');
+  if(inv){ invStep(inv.dataset.id,inv.dataset.inv==='+'?1:-1); return; }
+  const del=t.closest('[data-del]');
+  if(del){ const it=S.inv.find(x=>x.id===del.dataset.del); if(it&&confirm(`¿Quitar "${it.name}" del inventario?`)){S.inv=S.inv.filter(x=>x!==it); save(); render();} return; }
+  const em=t.closest('[data-emo]');
+  if(em){ addEmo=em.dataset.emo; document.querySelectorAll('[data-emo]').forEach(b=>b.classList.toggle('on',b===em)); return; }
+  const a=t.closest('[data-act]'); if(!a) return;
+  switch(a.dataset.act){
+    case 'today': sel=Math.min(Math.max(todayIdx(),0),10); view='day'; render(); break;
+    case 'cocino': if(!isLocked(sel)){const s=ds(sel); s.cocino=!s.cocino; save(); render();} break;
+    case 'gip-': S.gipsy=Math.max(0,S.gipsy-1); save(); render(); break;
+    case 'gip+': S.gipsy+=2; save(); render(); toast('🐕 +1 funda para Gipsy (2 porciones)'); break;
+    case 'unlockday': if(await askPin('Desbloquear día','Para editar un día que ya pasó')){unlocked.add(sel); render(); toast('🔓 Día desbloqueado');} break;
+    case 'closeov': closeOv(); break;
+    case 'ropaok': { const ti=todayIdx(), before=progress(ti).p; ds(ti).ropa=true; save(); closeOv(); render(); toast('🧺 ¡Ropa lavada! Crack'); if(ti===sel&&before<1&&progress(ti).p===1) celebrate(); break; }
+    case 'lock': lockWarn(); break;
+    case 'lockNow': lockApp(); break;
+    case 'menu': openOv(`<div class="sheet menu"><h3>⚙️ Opciones</h3><p>Los datos viven solo en esta tablet</p>
+        <button class="btn" data-act="export">💾 Guardar respaldo (archivo)</button>
+        <button class="btn yel" data-act="import">📂 Restaurar respaldo</button>
+        <button class="btn ghost" data-act="closeov">Cerrar</button></div>`); break;
+    case 'export': {
+      const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'}), u=URL.createObjectURL(b), l=document.createElement('a');
+      l.href=u; l.download=`jamboree-respaldo-${ymd(now())}.json`; document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(u),2000);
+      closeOv(); toast('💾 Respaldo guardado en Descargas'); break; }
+    case 'import': closeOv(); $('#impf').click(); break;
+  }
+});
+document.addEventListener('input',e=>{
+  const f=e.target.closest('[data-txt]'); if(!f||isLocked(sel)) return;
+  ds(sel)[f.dataset.txt]=f.value.slice(0,60); saveSoon();
+});
+document.addEventListener('submit',e=>{
+  if(e.target.id!=='addf') return; e.preventDefault();
+  const fd=new FormData(e.target), n=String(fd.get('n')||'').trim(), q=Math.max(1,Math.min(99,parseInt(fd.get('q'),10)||1));
+  if(!n) return;
+  S.inv.push({id:'a'+(S.seq++),name:n,emo:addEmo,qty:q,max:q,step:1,any:true});
+  save(); render(); toast(`💝 Añadido: ${n} ×${q}`);
+});
+$('#impf').addEventListener('change',async e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  try{
+    const d=JSON.parse(await f.text());
+    if(!d||d.v!==1||!d.days||!Array.isArray(d.inv)) throw 0;
+    if(!await askPin('Restaurar respaldo','Reemplaza todos los datos actuales')) return;
+    S=d; save(); render(); toast('📂 Respaldo restaurado');
+  }catch(err){ toast('⚠️ Ese archivo no es un respaldo válido'); }
+});
+window.addEventListener('pagehide',save);
+
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
