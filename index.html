@@ -215,6 +215,7 @@ main{padding:0 20px 40px}
     <button class="btn" data-view="day">📅 Días</button>
     <button class="btn pink" data-view="inv">🍫 Inventario</button>
     <button class="btn ghost icon" data-act="menu" aria-label="Opciones">⚙️</button>
+    <button class="btn lime" data-act="install" id="instBtn" hidden>📲 Instalar app</button>
     <button class="btn ghost icon" data-act="lock" aria-label="Bloquear">🔒</button>
   </header>
   <nav class="strip" id="strip"></nav>
@@ -609,7 +610,11 @@ document.addEventListener('click',async e=>{
     case 'ropaok': { const ti=todayIdx(), before=progress(ti).p; ds(ti).ropa=true; save(); closeOv(); render(); toast('🧺 ¡Ropa lavada! Crack'); if(ti===sel&&before<1&&progress(ti).p===1) celebrate(); break; }
     case 'lock': lockWarn(); break;
     case 'lockNow': lockApp(); break;
+    case 'install':
+      if(instEvt){ instEvt.prompt(); const r=await instEvt.userChoice; instEvt=null; $('#instBtn').hidden=true; if(r.outcome==='accepted') toast('📲 ¡Instalando Jamboree!'); }
+      break;
     case 'menu': openOv(`<div class="sheet menu"><h3>⚙️ Opciones</h3><p>Los datos viven solo en esta tablet</p>
+        <p style="margin-top:8px">${isApp()?'✅ Abierta como app instalada':'🌐 Abierta en el navegador'}</p>
         <button class="btn" data-act="export">💾 Guardar respaldo (archivo)</button>
         <button class="btn yel" data-act="import">📂 Restaurar respaldo</button>
         <button class="btn ghost" data-act="closeov">Cerrar</button></div>`); break;
@@ -640,6 +645,11 @@ $('#impf').addEventListener('change',async e=>{
 window.addEventListener('pagehide',save);
 
 if('serviceWorker' in navigator&&location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+// Instalación como app (Chrome Android)
+let instEvt=null;
+function isApp(){ return matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches; }
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); instEvt=e; if(!isApp()) $('#instBtn').hidden=false; });
+window.addEventListener('appinstalled',()=>{ instEvt=null; $('#instBtn').hidden=true; toast('✅ Jamboree instalada · ábrela desde su ícono'); });
 })();
 </script>
 </body>

@@ -1,5 +1,5 @@
-﻿// Jamboree — funciona sin internet. Red primero (para recibir actualizaciones), caché como respaldo.
-const C = 'jamboree-v3';
+// Jamboree — funciona sin internet. Red primero (para recibir actualizaciones), caché como respaldo.
+const C = 'jamboree-v4';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(CORE))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
